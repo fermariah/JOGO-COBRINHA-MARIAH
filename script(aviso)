@@ -1,0 +1,71 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using TMPro; 
+using UnityEngine.UI; 
+
+public class UIManager : MonoBehaviour //classe para interferir nas configurações das cenas, interfaces dos botões e texts
+{
+    [SerializeField]
+    TMP_Dropdown dimensaoDropdown;
+    [SerializeField]
+    TMP_Dropdown velocidadeDropdown;
+    [SerializeField]
+    Button iniciarbutton;
+   int gridAltura;
+   int gridLargura;
+   float Velocidadecobra;
+
+    void Start() //método para clicar no botão de iniciar (na cena de menu)
+    {
+        iniciarbutton.onClick.AddListener(IniciarJogo);
+    }
+
+    void IniciarJogo() //método chamado ao iniciar o jogo, tendo escolhas de dimensão e na velocidade da cobra
+    {
+        bool dimensaoValida = false;
+        bool velocidadeValida = false;
+
+        while (!dimensaoValida)
+        {
+            if (dimensaoDropdown.value == 0)
+            {
+                gridAltura = 10;
+                gridLargura = 10;
+                dimensaoValida = true;
+            }
+            else if (dimensaoDropdown.value == 1)
+            {
+                gridAltura = 20;
+                gridLargura = 20;
+                dimensaoValida = true;
+            }
+            else if (dimensaoDropdown.value == 2)
+            {
+                gridAltura = 30;
+                gridLargura = 30;
+                dimensaoValida = true;
+            }
+        }
+
+        while (!velocidadeValida)
+        {
+            if (velocidadeDropdown.value == 0)
+            {
+               Velocidadecobra = 0.5f; 
+               velocidadeValida = true;
+            }
+            else if (velocidadeDropdown.value == 1)
+            {
+                Velocidadecobra = 0.3f; 
+                velocidadeValida = true;
+            }
+            else if (velocidadeDropdown.value == 2)
+            {
+                Velocidadecobra = 0.1f; 
+                velocidadeValida = true;
+            }
+        }
+  
+        SceneManager.LoadScene("SampleScene");
+    }
+}
