@@ -1,0 +1,109 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GameManager : MonoBehaviour //classe para definir as instancias dos objetos e ajustar os botões
+{
+    public static GameManager instance;
+    int gridAltura;
+    int gridLargura;
+    int gridDimensao;
+    [SerializeField]
+    GameObject prefabCobra;
+    [SerializeField]
+    GameObject prefabComida;
+    Vector2 PosicaoComida;
+    List<Vector2> CobraPosicoes = new List<Vector2>();
+    Vector2 direcaoCabecaCobra;
+    float VelocidadeCobra;
+
+    private void Awake() //singleton
+    {
+            instance = this;
+    }
+
+    void Start() //método para iniciar o jogo
+    {
+        IniciarJogo();
+    }
+
+    void Update() //método para definir as direções que a cobra terá que andar, 
+    {
+        if (Input.GetKeyDown(KeyCode.UpArrow) && direcaoCabecaCobra != Vector2.up)
+        {
+            MoverCobra();
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow) && direcaoCabecaCobra != Vector2.down)
+        {
+            MoverCobra();
+        }
+        if (Input.GetKeyDown(KeyCode.LeftArrow) && direcaoCabecaCobra != Vector2.left)
+        {
+            MoverCobra();
+        }
+        if (Input.GetKeyDown(KeyCode.RightArrow) && direcaoCabecaCobra != Vector2.right)
+        {
+            MoverCobra();
+        }
+
+        VerificarColisoes();
+    }
+
+    void IniciarJogo() //método para indicar o início do jogo, gerando a cobra e a comida em uma posição aleatória
+    {
+        CobraPosicoes.Add(new Vector2(gridAltura / 2, gridLargura / 2)); 
+        GerarComida();
+        InstanciarObjetos();
+    }
+
+    void MoverCobra() //método para fazer com que a cobra se mova conforme ela vai crescendo
+    {
+        Vector2 proximaPosicao = CobraPosicoes[0] + direcaoCabecaCobra;
+        CobraPosicoes.Insert(0, proximaPosicao); 
+
+        if (proximaPosicao != PosicaoComida)
+        {
+            CobraPosicoes.RemoveAt(CobraPosicoes.Count - 1); 
+        }
+        else
+        {
+            GerarComida(); 
+        }
+
+        InstanciarObjetos();
+    }
+
+    void GerarComida() //método para fazer com gere a comida em uma posição aleatória na matriz
+    {
+        PosicaoComida = new Vector2 (Random.Range(0, gridAltura), Random.Range(0, gridLargura));
+    }
+
+    void VerificarColisoes() //método para checar a colisão da cobra com ela mesma, se isso acontecer, o jogo acaba
+    {
+        Vector2 cabecaCobra = CobraPosicoes[0];
+
+        for (int i = 1; i < CobraPosicoes.Count; i++)
+        {
+            if (CobraPosicoes[i] == cabecaCobra)
+            {
+                Debug.Log("Game Over! :( Tente novamente...");
+                CobraPosicoes.Clear();
+                IniciarJogo();
+                break;
+            }
+        }
+    }
+
+    void InstanciarObjetos() //método para instanciar os objetos como a cobra e a comida
+    {
+        foreach (Transform corpo in transform)
+        {
+            Destroy(corpo.gameObject);
+        }
+        foreach (Vector2 cabeca in CobraPosicoes)
+        {
+            GameObject partesCobra = Instantiate(prefabCobra, new Vector3(cabeca.x, cabeca.y, 0), Quaternion.identity);
+            partesCobra.transform.parent = transform;
+        }
+        Instantiate(prefabComida, new Vector3(PosicaoComida.x, PosicaoComida.y, 0), Quaternion.identity);
+    }
+}
