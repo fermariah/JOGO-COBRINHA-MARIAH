@@ -1,0 +1,33 @@
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+ 
+public class Comida : MonoBehaviour //método para definir as posições da comida e as suas funções
+{
+    public BoxCollider2D gridArea; 
+
+    private void Start()
+    {
+        RandomizePosicao(); 
+    }
+
+    private void RandomizePosicao() //define a posição inicial aleatória da comida, além de gerar uma posição aleatória dentro do grid, também irá reposicionar a comida
+    {
+        Bounds bounds = gridArea.bounds;
+
+        
+        float x = Mathf.Floor(Random.Range(bounds.min.x, bounds.max.x));
+        float y = Mathf.Floor(Random.Range(bounds.min.y, bounds.max.y));
+
+        transform.position = new Vector2(x, y); 
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) //detecta colisão com a cobra e Verifica se o objeto que colidiu é a cobra
+    {
+        if (other.CompareTag("Player")) 
+        {
+            other.GetComponent<Player>().CrescerCobra();
+            RandomizePosicao(); 
+        }
+    }
+}
