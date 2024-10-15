@@ -1,0 +1,39 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Player : MonoBehaviour //classe para definir as funções e as posições do player
+{
+    List<Transform> segmentosCobra;
+    Transform Prefabsegmentos;
+    Vector2 direcao;
+    int Taminicial;
+
+    private void Start() //método para reiniciar a cobra em uma posição aleatória para ir andando conforme o jogo
+    {
+        ReiniciarCobra();
+    }
+
+    private void FixedUpdate() //método para fazer com que a cobra se mova a cada 1 frame
+    {
+        MoverCobra();
+    }
+
+    private void MoverCobra() //método para ajustar a posição da cobra
+    {
+        Vector3 posicao = transform.position;
+        transform.position = new Vector3(Mathf.Round(transform.position.x) + direcao.x, Mathf.Round(transform.position.y) + direcao.y, 0.0f);
+    }
+
+    private void ReiniciarCobra() //método para ajustar a direcão dos movimentos e as posições
+    {
+        direcao = Vector2.right;
+        transform.position = Vector3.zero;
+    }
+
+    public void CrescerCobra() //método para fazer com que a cobra cresça e a instancie
+    {
+        Transform segmentos = Instantiate(Prefabsegmentos);
+        segmentos.position = segmentosCobra.Count > 0 ? segmentosCobra[segmentosCobra.Count - 1].position : transform.position;
+        segmentosCobra.Add(segmentos);
+    }
+}
